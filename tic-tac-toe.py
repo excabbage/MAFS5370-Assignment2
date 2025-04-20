@@ -459,8 +459,8 @@ class TD:
         player2_state = [] #storage the states player2 observed in episode
         player2_pair = []#storage the state-action pairs player2 observed in episode
         player2_Greedy = [] #storage the (S,A) where A=argmax Q(S,a) for player2.
-#        S = State()# Starting state
-        S = State_test()# Starting state , used for intergral testing       
+        S = State()# Starting state
+#        S = State_test()# Starting state , used for intergral testing       
         while not S.is_end():
             player1_state.append(S) #player1 play first, visit the board
             pi_action,mu_action = self.player1.get_action(S)
