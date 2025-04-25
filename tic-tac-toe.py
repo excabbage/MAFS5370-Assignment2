@@ -1,6 +1,8 @@
 import numpy as np
 import math
 
+
+
 class State:
     '''
     The class State include all the environment the agent needed:
@@ -538,34 +540,5 @@ class TD:
         for n in range( len(player2_pair) ) :
             self.player2.tau[player2_pair[n]] = current_times #memory the most recently time for visited state-action pairs      
 
-def visualize(AI:AI_agent(), first:bool) :
-    S = State_test()# initial board
-    if first :
-        S.print_state()
-        #input (i,j) to put a chessman
-        #|   | 0 | 1 | 2 |
-        #| 0 |
-        #| 1 |
-        #| 2 |
-        action = input("Input your position: ")
-        action = [int(num) for num in action.split(',')]
-        S = S.next_state(action, (1 if first else -1))
-    while not S.is_end():
-        S.print_state()
-        hash_val,n = S.hash()
-        action = AI.policy[hash_val]
-        action = S.rotate_action(action, (4-n)%4)
-        S = S.next_state(action, AI.symbol)
-        if S.is_end() :
-            break    
-        S.print_state()
-        #input (i,j) to put a chessman
-        #|   | 0 | 1 | 2 |
-        #| 0 |
-        #| 1 |
-        #| 2 |
-        action = input("Input your position: ")
-        action = [int(num) for num in action.split(',')]
-        S = S.next_state(action, (1 if first else -1))
-    S.print_state()
+
     
