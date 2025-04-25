@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import tic_tac_toe
 from tic_tac_toe import State, State_test, AI_agent, TD, visualize
 
@@ -352,18 +353,21 @@ print(r3[len(r3)-1],r6[len(r6)-1])
 '''
 Test14 title: TD class, Q_learning function:
 Test design: Test its function using State_test class, which is a 4*4 tic-tac-toe.
-            And player wins the game when 3 in row/column/diagnol.
+            And player wins the game when 3 in row/column/diagonal.
             No rejection for players' choice. 
-Output must: First player can always win the game 
+Output must: First player can always win the game by 3 steps. So the value of initial state S is
+                v(S) = q(S,pi(S)) = 0.9*0.9*1 = 0.81
 '''
 test = TD() #Specially, the episode is generated using State_test class instead of State class
-S = State_test()
-h = S.hash()[0]
-reward1 = [] #storage the discount reward for player1
+S = State_test() #initial State
+h = S.hash()[0] #get the initial State hash value
+reward1 = [] #storage the v(S) for player1
 for i in range(100000):
     test.Q_learning(i)
-    pi = test.player1.policy[S]
+    pi = test.player1.policy[h] #pi(S)
     reward1.append(test.player1.Q_value.get(h + str(pi[0]) + str(pi[1]),0))
+plt.plot(reward1) 
+plt.axhline(0.81,color='black',linestyle='--')
+plt.xlabel('episode')
+plt.ylabel('v(S)')
 
-
-visualize(test.player1, False)
