@@ -276,11 +276,11 @@ class State_test:
 
     def is_end(self) -> bool:
         results = [] #storage the sum of each row, column. If someone wins, the sum should reach 3 or -3.
-        # check row, 3 in a row
+        # check row, 4 in a row
         for i in range(self.Board_Row):
             for j in range(self.Board_Col - 3 + 1):
                     results.append(np.sum(self.data[i,j:j+3]))
-        # check columns, 3 in a column
+        # check columns, 4 in a column
         for j in range(self.Board_Col):
             for i in range(self.Board_Row - 3 + 1):
                 results.append(np.sum(self.data[i:i+3,j]))
@@ -289,7 +289,7 @@ class State_test:
             for j in range(self.Board_Col - 3 + 1):
                 results.append(self.data[i,j] + self.data[i+1,j+1] + self.data[i+2,j+2])     
         for i in range(self.Board_Row - 3 + 1):
-            for j in range(2, self.Board_Col):
+            for j in range(4, self.Board_Col):
                 results.append(self.data[i,j] + self.data[i+1,j-1] + self.data[i+2,j-2])                     
         # whether a player has won
         for result in results: # check row, column
@@ -298,7 +298,7 @@ class State_test:
                 return True
             if result == -3 :
                 self.winner = -1
-                return True        
+                return True 
         # whether it's a draw
         for i in range(self.Board_Row):
             for j in range(self.Board_Col):
@@ -386,17 +386,18 @@ class AI_agent:
     def get_action(self, state:State) -> tuple[list[int,int],list[int,int]]:
         '''
         Given state,
-        First, obtain policy action. If policy doesn't exist, use the first action in action_space
+        First, obtain policy action. If policy doesn't exist, use the random action in action_space
         Second,, obtain epsilon action by randomly choosing in action_space
         Both actions are adjusted by matching it to rotatied state in State.hash(). So that the hash value of (S,A) is unique.
         Return two action 
         '''
         action_space = state.get_action_space()
         hash_val,n = state.hash() #getting the number of ratation
-        if self.policy.get(hash_val) : #get greedy action. If policy doesn't exist, using first action in action_space.
+        if self.policy.get(hash_val) : #get greedy action. If policy doesn't exist, using random action in action_space.
             pi_action = self.policy[hash_val]
         else :
-            pi_action = action_space[0] 
+            index = round(np.random.uniform(1,len(action_space))) - 1
+            pi_action = action_space[index] 
             pi_action = state.rotate_action(pi_action, n) #adjusted the action so that hash value of (S,A) is unique in the sense of rotation     
         if np.random.uniform(0,1) < self.epsilon : #If epsilon happen, get random action, else using greedy action
             index = round(np.random.uniform(1,len(action_space))) - 1 #randomly choose action
@@ -412,10 +413,10 @@ class TD:
     '''
     player1 = AI_agent(1)
     player2 = AI_agent(-1)
-    step_size = 0.2
+    step_size = 0.01
     gamma = 0.9
-    lamb = 0.9
-    kapa = 0.001
+    lamb = 0.77
+    kapa = 0.0006
 
     def delta(self, agent:AI_agent(), hash_val1:str, hash_val2:str, R:int, time:int) -> float:
         '''
@@ -461,8 +462,8 @@ class TD:
         player2_state = [] #storage the states player2 observed in episode
         player2_pair = []#storage the state-action pairs player2 observed in episode
         player2_Greedy = [] #storage the (S,A) where A=argmax Q(S,a) for player2.
-        S = State()# Starting state
-#        S = State_test()# Starting state , used for intergral testing       
+#        S = State()# Starting state
+        S = State_test()# Starting state , used for intergral testing       
         while not S.is_end():
             player1_state.append(S) #player1 play first, visit the board
             pi_action,mu_action = self.player1.get_action(S)
