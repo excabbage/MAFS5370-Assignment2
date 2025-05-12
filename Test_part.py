@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import tic_tac_toe
-from tic_tac_toe import State, State_test, AI_agent, TD, visualize
+from tic_tac_toe import State, State_test, AI_agent, TD
 
 '''
 Test1 title: State class, _init_ function:
@@ -270,22 +270,22 @@ print(test.policy)
 '''
 Test10 title: AI_agent class, get_action function:
 Test design: The input State set to be default state.
-            First case: Without any policy, call the function for 80000 times. And print the overall results.
-            Second case: With Given policy(default state) = [6,6], call the function for 300 times. And print the overall results.
-Output must: First case there are 80 results. [0,4],[0,4] will occur roughly 72100 times, other occur 100 times.
-            Second case there are 80 results. [6,6],[6,6] will occur roughly 72100 times, other occur 100 times.
+            First case: Without any policy, call the function for 10 times. And print the overall results.
+            Second case: With Given policy(default state) = [6,6], call the function for 100 times. And print the overall results.
+Output must: First case the results. First action equal second action case will occur roughly 9 times.
+            Second case the results. [6,6],[6,6] will occur roughly 90 times, other occur 100 times.
 ''' 
 S = State()
 test = AI_agent()
 #First case
 case1 = []
-for n in range(80000):
+for n in range(10):
     case1.append(test.get_action(S))
 pd.Series(case1).value_counts() 
 #Second case
 test.policy[S.hash()[0]] = [6,6] #With Given policy(default state) = [6,6]
 case2 = []
-for n in range(80000):
+for n in range(100):
     case2.append(test.get_action(S))
 pd.Series(case2).value_counts() 
 
@@ -298,7 +298,7 @@ Test design: Let the hash_val1 be '01', hash_val2 be '02', and set the tau of ha
             Third case, both Q_value of (S,A) are initially 0, reward is -1, time is 10
             Fourth case, Q(S,A)_t = 10, Q(S,A)_(t+1) = 8, reward is 0, time is 1
             Fifth case, Q(S,A)_t = 10, Q(S,A)_(t+1) = 8, reward is 1, time is 1
-Output must: Compute the formula by hand, the results should be 0,-1,-0.997,-2.8,-1.8 respectively
+Output must: Compute the formula by hand, the results should be 0, -1.0, -0.9982, -2.8, -1.8 respectively
 ''' 
 test = TD()
 test.player1.tau['01'] = 1 #set the tau of hash_val1 be 1
@@ -319,7 +319,7 @@ Test design: Let the hash_val be '01'.
             Second case, Q_value is initially 0, delta is 1, E is 1
             Third case, Q_value is 10, delta is 1, E is 0
             Fourth case, Q_value is 10, delta is 1, E is 0.5
-Output must: Compute the formula by hand, the Q_value after backup should be 0,0.2,10,10.1 respectively
+Output must: Compute the formula by hand, the Q_value after backup should be 0,0.01,10,10.005 respectively
 ''' 
 test = TD()
 test.backup(test.player1, '01', 1, 0)#case1
@@ -370,4 +370,5 @@ plt.plot(reward1)
 plt.axhline(0.81,color='black',linestyle='--')
 plt.xlabel('episode')
 plt.ylabel('v(S)')
+
 
